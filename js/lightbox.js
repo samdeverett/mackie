@@ -113,7 +113,7 @@
     hammer.get('swipe').set({
         direction: Hammer.DIRECTION_HORIZONTAL,
         threshold: 40, // Minimum distance (in pixels) required to trigger a swipe
-        velocity: 0.3   // Minimum speed (in pixels/second) to trigger a swipe
+        velocity: 0.8   // Minimum speed (in pixels/second) to trigger a swipe
     });
 
     // Handle swipe events and reset zoom
