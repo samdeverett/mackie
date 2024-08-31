@@ -134,7 +134,10 @@
 
     // Handle pinch event for zoom
     pinchZoom.on('pinch', function(ev) {
-        scale = Math.max(1, lastScale * ev.scale); // Limit zoom-out to 1x
+        // Prevent zoom-out beyond the original size (scale = 1)
+        scale = Math.max(1, lastScale * ev.scale); // Limit zoom-out to the original image size (1x)
+        
+        // Apply transformation
         transform = 'translate(' + posX + 'px, ' + posY + 'px) scale(' + scale + ')';
         imgElement.style.transform = transform;
     });
@@ -142,6 +145,7 @@
     pinchZoom.on('pinchend', function() {
         lastScale = scale; // Update the last scale after pinch ends
     });
+
 
     // Handle pan event for moving the image
     pinchZoom.on('pan', function(ev) {
