@@ -118,7 +118,7 @@
         e.preventDefault();
     });
 
-    // Enable pinch-to-zoom for the image
+    // Enable pinch-to-zoom and panning for the image
     var imgElement = document.querySelector('.overlay img');
     var pinchZoom = new Hammer(imgElement);
 
@@ -126,17 +126,52 @@
     pinchZoom.get('pinch').set({ enable: true });
 
     var scale = 1; // Initial scale
+    var lastScale = 1; // To store the last scale value after pinch
+    var posX = 0, posY = 0; // Variables to store the current position
+    var lastPosX = 0, lastPosY = 0; // To store the last pan positions
+    var maxPosX, maxPosY, transform; // Variables for boundary checks
+    var isPanning = false; // To track if panning is happening
 
-    // Handle pinch event
+    // Handle pinch event for zoom
     pinchZoom.on('pinch', function(ev) {
-        scale = ev.scale;
-        imgElement.style.transform = 'translate(-50%, -50%) scale(' + scale + ')';
+        scale = Math.max(1, lastScale * ev.scale); // Limit zoom-out to 1x
+        transform = 'translate(' + posX + 'px, ' + posY + 'px) scale(' + scale + ')';
+        imgElement.style.transform = transform;
     });
 
-    // Reset zoom on double tap
+    pinchZoom.on('pinchend', function() {
+        lastScale = scale; // Update the last scale after pinch ends
+    });
+
+    // Handle pan event for moving the image
+    pinchZoom.on('pan', function(ev) {
+        if (scale > 1) { // Only allow panning if the image is zoomed in
+            posX = lastPosX + ev.deltaX;
+            posY = lastPosY + ev.deltaY;
+
+            // Boundary checks to prevent panning out of image limits
+            maxPosX = Math.max((scale - 1) * imgElement.clientWidth / 2, 0);
+            maxPosY = Math.max((scale - 1) * imgElement.clientHeight / 2, 0);
+
+            posX = Math.min(Math.max(posX, -maxPosX), maxPosX);
+            posY = Math.min(Math.max(posY, -maxPosY), maxPosY);
+
+            transform = 'translate(' + posX + 'px, ' + posY + 'px) scale(' + scale + ')';
+            imgElement.style.transform = transform;
+        }
+    });
+
+    pinchZoom.on('panend', function() {
+        lastPosX = posX;
+        lastPosY = posY;
+    });
+
+    // Reset zoom and position on double tap
     pinchZoom.on('doubletap', function() {
         scale = 1;
-        imgElement.style.transform = 'translate(-50%, -50%) scale(1)';
+        posX = posY = lastPosX = lastPosY = 0;
+        imgElement.style.transform = 'translate(0, 0) scale(1)';
+        lastScale = 1;
     });
 
     changeEvent();
