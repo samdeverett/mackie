@@ -27,6 +27,7 @@
     var lastPanX = 0;
     var lastPanY = 0;
     var isDragging = false;
+    var panVelocity = 1.5; // Adjust this value to increase/decrease panning speed
 
     // Hammer.js configuration
     var imgElement = document.querySelector('.overlay img');
@@ -36,13 +37,29 @@
     hammer.get('swipe').set({ direction: Hammer.DIRECTION_HORIZONTAL });
 
     // Pinch to zoom
+    hammer.on('pinchstart', function(ev) {
+        imgElement.style.transition = 'none'; // Remove transition for smoother zooming
+    });
+
     hammer.on('pinch', function(ev) {
-        scale = Math.max(1, Math.min(lastScale * ev.scale, 5)); // Limit zoom between 1x and 5x
+        var currentScale = scale * ev.scale;
+        currentScale = Math.max(1, Math.min(currentScale, 5)); // Limit zoom between 1x and 5x
+        
+        // Calculate zoom center point
+        var zoomCenterX = (ev.center.x - imgElement.offsetLeft) / scale;
+        var zoomCenterY = (ev.center.y - imgElement.offsetTop) / scale;
+        
+        // Adjust pan position based on zoom center
+        panX = zoomCenterX - (zoomCenterX * currentScale / scale) + panX;
+        panY = zoomCenterY - (zoomCenterY * currentScale / scale) + panY;
+        
+        scale = currentScale;
         updateImageTransform();
     });
 
     hammer.on('pinchend', function() {
         lastScale = scale;
+        imgElement.style.transition = 'transform 0.3s'; // Restore transition
     });
 
     // Pan
@@ -60,8 +77,8 @@
             var deltaX = ev.center.x - lastPanX;
             var deltaY = ev.center.y - lastPanY;
             
-            panX += deltaX / scale;
-            panY += deltaY / scale;
+            panX += (deltaX / scale) * panVelocity;
+            panY += (deltaY / scale) * panVelocity;
             
             lastPanX = ev.center.x;
             lastPanY = ev.center.y;
