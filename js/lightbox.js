@@ -14,49 +14,59 @@
     var $cache = $('.cache');
 
     var addToCache = function(src) {
-            if ($cache.find('img[src="' + src + '"]').length < 1) {
-                $cache.append('<li><img src="' + src + '"></li>');
-            }
-        },
-        changeEvent = function() {
-            var $this = $gallery.find('a[data-id="' + window.location.hash + '"]');
-            if ($this.length == 1) {
-                var index = $this.parent().index();
-                $overlayImage.fadeOut(fadeTime, function() {
-                    $overlayImage.attr('src', $this.attr('href')).fadeIn(fadeTime);
-                    $caption.html($this.attr('data-caption'));
-                });
-                $body.addClass('overlay-active');
+        if ($cache.find('img[src="' + src + '"]').length < 1) {
+            $cache.append('<li><img src="' + src + '"></li>');
+        }
+    };
 
-                if (index > 0) {
-                    var $prevEl = $gallery.children().eq(index - 1).find('a');
-                    $prev.attr('href', $prevEl.attr('data-id')).show();
-                    addToCache($prevEl.attr('href'));
-                }
-                else {
-                    $prev.hide();
-                }
+    function resetZoom() {
+        scale = 1;
+        posX = posY = lastPosX = lastPosY = 0;
+        imgElement.style.transform = 'translate(-50%, -50%) scale(1)';
+        lastScale = 1;
+    }
 
-                if (index < $gallery.find('a:last').parent().index()) {
-                    var $nextEl = $gallery.children().eq(index + 1).find('a');
-                    $next.attr('href', $nextEl.attr('data-id')).show();
-                    addToCache($nextEl.attr('href'));
-                }
-                else {
-                    $next.hide();
-                }
+    var changeEvent = function() {
+        var $this = $gallery.find('a[data-id="' + window.location.hash + '"]');
+        if ($this.length == 1) {
+            var index = $this.parent().index();
+            resetZoom();
+            $overlayImage.fadeOut(fadeTime, function() {
+                $overlayImage.attr('src', $this.attr('href')).fadeIn(fadeTime);
+                $caption.html($this.attr('data-caption'));
+            });
+            $body.addClass('overlay-active');
 
-                addToCache($this.attr('href'));
+            if (index > 0) {
+                var $prevEl = $gallery.children().eq(index - 1).find('a');
+                $prev.attr('href', $prevEl.attr('data-id')).show();
+                addToCache($prevEl.attr('href'));
             }
             else {
-                $body.removeClass('overlay-active');
-                $overlayImage.attr('src', '');
+                $prev.hide();
             }
-        },
-        changeHash = function(hash) {
-            history.replaceState(undefined, undefined, hash);
-            changeEvent();
-        };
+
+            if (index < $gallery.find('a:last').parent().index()) {
+                var $nextEl = $gallery.children().eq(index + 1).find('a');
+                $next.attr('href', $nextEl.attr('data-id')).show();
+                addToCache($nextEl.attr('href'));
+            }
+            else {
+                $next.hide();
+            }
+
+            addToCache($this.attr('href'));
+        }
+        else {
+            $body.removeClass('overlay-active');
+            $overlayImage.attr('src', '');
+        }
+    };
+
+    var changeHash = function(hash) {
+        history.replaceState(undefined, undefined, hash);
+        changeEvent();
+    };
 
     $close.click(function() {
         changeHash('#');
@@ -78,32 +88,32 @@
         return false;
     });
 
-        // Arrow key support
-        $(document).keyup(function(e) {
-            switch (e.which) {
-                case 37: // left
-                    if ($prev.is(':visible')) {
-                        changeHash($prev.attr('href'));
-                        resetZoom();
-                    }
-                    break;
-    
-                case 39: // right
-                    if ($next.is(':visible')) {
-                        changeHash($next.attr('href'));
-                        resetZoom();
-                    }
-                    break;
-    
-                case 27: // escape
-                    changeHash('#');
-                    break;
-    
-                default:
-                    return; // exit this handler for other keys
-            }
-            e.preventDefault();
-        });
+    // Arrow key support
+    $(document).keyup(function(e) {
+        switch (e.which) {
+            case 37: // left
+                if ($prev.is(':visible')) {
+                    changeHash($prev.attr('href'));
+                    resetZoom();
+                }
+                break;
+
+            case 39: // right
+                if ($next.is(':visible')) {
+                    changeHash($next.attr('href'));
+                    resetZoom();
+                }
+                break;
+
+            case 27: // escape
+                changeHash('#');
+                break;
+
+            default:
+                return; // exit this handler for other keys
+        }
+        e.preventDefault();
+    });
 
     // Add swipe detection with Hammer.js
     var overlayElement = document.querySelector('.overlay');
@@ -184,15 +194,6 @@
     pinchZoom.on('doubletap', function() {
         resetZoom();
     });
-
-    // Function to reset zoom and position
-    function resetZoom() {
-        scale = 1;
-        posX = posY = lastPosX = lastPosY = 0;
-        // Reset to the original CSS transformation
-        imgElement.style.transform = 'translate(-50%, -50%) scale(1)';
-        lastScale = 1;
-    }
 
     changeEvent();
 })();
