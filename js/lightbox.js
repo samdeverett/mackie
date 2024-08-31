@@ -35,7 +35,10 @@
     var hammer = new Hammer(imgElement);
     hammer.get('pinch').set({ enable: true });
     hammer.get('pan').set({ direction: Hammer.DIRECTION_ALL });
-    hammer.get('swipe').set({ direction: Hammer.DIRECTION_HORIZONTAL });
+
+    var overlayElement = document.querySelector('.overlay');
+    var overlayHammer = new Hammer(overlayElement)
+    overlayHammer.get('swipe').set({ direction: Hammer.DIRECTION_HORIZONTAL });
 
     // Pinch to zoom
     hammer.on('pinchstart', function(ev) {
@@ -96,13 +99,13 @@
     });
 
     // Swipe to change images (only when not zoomed)
-    hammer.on('swipeleft', function() {
+    overlayHammer.on('swipeleft', function() {
         if (scale === 1 && $next.is(':visible')) {
             changeHash($next.attr('href'));
         }
     });
 
-    hammer.on('swiperight', function() {
+    overlayHammer.on('swiperight', function() {
         if (scale === 1 && $prev.is(':visible')) {
             changeHash($prev.attr('href'));
         }
