@@ -9,6 +9,12 @@
     z-index: 1000;
 }
 
+.overlay img {
+    max-width: 90%;
+    max-height: 90%;
+    margin: auto; /* Centering the image itself */
+}
+
 .overlay-active .overlay {
     display: flex; /* Show the overlay */
 }
