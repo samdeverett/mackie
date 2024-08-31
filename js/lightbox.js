@@ -78,32 +78,32 @@
         return false;
     });
 
-    // Arrow key support
-    $(document).keyup(function(e) {
-        switch (e.which) {
-            case 37: // left
-                if ($prev.is(':visible')) {
-                    changeHash($prev.attr('href'));
-                    resetZoom();
-                }
-                break;
-
-            case 39: // right
-                if ($next.is(':visible')) {
-                    changeHash($next.attr('href'));
-                    resetZoom();
-                }
-                break;
-
-            case 27: // escape
-                changeHash('#');
-                break;
-
-            default:
-                return; // exit this handler for other keys
-        }
-        e.preventDefault();
-    });
+        // Arrow key support
+        $(document).keyup(function(e) {
+            switch (e.which) {
+                case 37: // left
+                    if ($prev.is(':visible')) {
+                        changeHash($prev.attr('href'));
+                        resetZoom();
+                    }
+                    break;
+    
+                case 39: // right
+                    if ($next.is(':visible')) {
+                        changeHash($next.attr('href'));
+                        resetZoom();
+                    }
+                    break;
+    
+                case 27: // escape
+                    changeHash('#');
+                    break;
+    
+                default:
+                    return; // exit this handler for other keys
+            }
+            e.preventDefault();
+        });
 
     // Add swipe detection with Hammer.js
     var overlayElement = document.querySelector('.overlay');
@@ -135,9 +135,9 @@
     var imgElement = document.querySelector('.overlay img');
     var pinchZoom = new Hammer(imgElement);
 
-    // Enable pinch gestures
+    // Enable pinch and pan gestures
     pinchZoom.get('pinch').set({ enable: true });
-    pinchZoom.get('pan').set({ enable: true }); // Enable panning
+    pinchZoom.get('pan').set({ enable: true }); 
 
     var scale = 1; // Initial scale
     var lastScale = 1; // To store the last scale value after pinch
@@ -148,7 +148,8 @@
     // Handle pinch event for zoom
     pinchZoom.on('pinch', function(ev) {
         scale = Math.max(1, lastScale * ev.scale); // Limit zoom-out to the original image size (1x)
-        transform = 'translate(' + posX + 'px, ' + posY + 'px) scale(' + scale + ')';
+        transform = 'translate(' + (posX + 0.5 * imgElement.clientWidth * (1 - scale)) + 'px, ' +
+                    (posY + 0.5 * imgElement.clientHeight * (1 - scale)) + 'px) scale(' + scale + ')';
         imgElement.style.transform = transform;
     });
 
@@ -188,6 +189,7 @@
     function resetZoom() {
         scale = 1;
         posX = posY = lastPosX = lastPosY = 0;
+        // Reset to the original CSS transformation
         imgElement.style.transform = 'translate(-50%, -50%) scale(1)';
         lastScale = 1;
     }
