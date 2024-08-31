@@ -28,6 +28,7 @@
     var lastPanY = 0;
     var isDragging = false;
     var panVelocity = 3; // Adjust this value to increase/decrease panning speed
+    var zoomSpeed = 0.05; // Adjust this value to control zoom speed (lower = slower)
 
     // Hammer.js configuration
     var imgElement = document.querySelector('.overlay img');
@@ -39,21 +40,23 @@
     // Pinch to zoom
     hammer.on('pinchstart', function(ev) {
         imgElement.style.transition = 'none'; // Remove transition for smoother zooming
+        lastScale = scale;
     });
 
     hammer.on('pinch', function(ev) {
-        var currentScale = scale * ev.scale;
-        currentScale = Math.max(1, Math.min(currentScale, 5)); // Limit zoom between 1x and 5x
+        var scaleDiff = ev.scale - 1; // How much the fingers have pinched
+        var newScale = lastScale + (scaleDiff * zoomSpeed);
+        newScale = Math.max(1, Math.min(newScale, 5)); // Limit zoom between 1x and 5x
         
         // Calculate zoom center point
         var zoomCenterX = (ev.center.x - imgElement.offsetLeft) / scale;
         var zoomCenterY = (ev.center.y - imgElement.offsetTop) / scale;
         
         // Adjust pan position based on zoom center
-        panX = zoomCenterX - (zoomCenterX * currentScale / scale) + panX;
-        panY = zoomCenterY - (zoomCenterY * currentScale / scale) + panY;
+        panX = zoomCenterX - (zoomCenterX * newScale / scale) + panX;
+        panY = zoomCenterY - (zoomCenterY * newScale / scale) + panY;
         
-        scale = currentScale;
+        scale = newScale;
         updateImageTransform();
     });
 
