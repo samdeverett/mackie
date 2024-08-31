@@ -13,10 +13,6 @@
     display: flex; /* Show the overlay */
 }
 
-img {
-    align-self: center;
-}
-
 .caption {
     color: white;
     margin-top: 10px;
