@@ -10,9 +10,8 @@
 }
 
 .overlay img {
-    max-width: 90%;
-    max-height: 90%;
-    margin: auto; /* Centering the image itself */
+    top: 50%;
+    transform: translateY(-50%);
 }
 
 .overlay-active .overlay {
