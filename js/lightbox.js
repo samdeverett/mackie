@@ -21,12 +21,9 @@
 
     var scale = 1; // Initial scale
     var lastScale = 1; // To store the last scale value after pinch
-    var posX = 0, posY = 0; // Variables to store the current position
-    var lastPosX = 0, lastPosY = 0; // To store the last pan positions
 
     function resetZoom() {
         scale = 1;
-        posX = posY = lastPosX = lastPosY = 0;
         imgElement.style.transform = 'translate(-50%, -50%) scale(1)';
         lastScale = 1;
     }
@@ -150,48 +147,97 @@
     var imgElement = document.querySelector('.overlay img');
     var pinchZoom = new Hammer(imgElement);
 
-    // Enable pinch and pan gestures
+    // Enable pinch gestures
     pinchZoom.get('pinch').set({ enable: true });
-    pinchZoom.get('pan').set({ enable: true });
+
+    // Variables for panning and zooming
+    var scale = 1;
+    var lastScale = 1;
+    var panX = 0;
+    var panY = 0;
+    var lastPanX = 0;
+    var lastPanY = 0;
+    var isDragging = false;
 
     // Handle pinch event for zoom
     pinchZoom.on('pinch', function(ev) {
-        scale = Math.max(1, lastScale * ev.scale); // Limit zoom-out to the original image size (1x)
-        imgElement.style.transform = `translate(-50%, -50%) scale(${scale})`;
+        scale = Math.max(1, Math.min(lastScale * ev.scale, 5)); // Limit zoom between 1x and 5x
+        updateImageTransform();
     });
 
     pinchZoom.on('pinchend', function() {
-        lastScale = scale; // Update the last scale after pinch ends
-    });
-
-    // Handle pan event for moving the image
-    pinchZoom.on('pan', function(ev) {
-        if (scale > 1) { // Only allow panning if the image is zoomed in
-            posX = lastPosX + ev.deltaX;
-            posY = lastPosY + ev.deltaY;
-
-            // Boundary checks to prevent panning out of image limits
-            var imgWidth = imgElement.clientWidth * scale;
-            var imgHeight = imgElement.clientHeight * scale;
-            var maxPosX = Math.max((scale - 1) * imgElement.clientWidth / 2, 0);
-            var maxPosY = Math.max((scale - 1) * imgElement.clientHeight / 2, 0);
-
-            posX = Math.min(Math.max(posX, -maxPosX), maxPosX);
-            posY = Math.min(Math.max(posY, -maxPosY), maxPosY);
-
-            imgElement.style.transform = `translate(-50%, -50%) scale(${scale})`;
-        }
-    });
-
-    pinchZoom.on('panend', function() {
-        lastPosX = posX;
-        lastPosY = posY;
+        lastScale = scale;
     });
 
     // Reset zoom and position on double tap
     pinchZoom.on('doubletap', function() {
         resetZoom();
     });
+
+    // Mouse events for panning
+    imgElement.addEventListener('mousedown', startDragging);
+    document.addEventListener('mousemove', drag);
+    document.addEventListener('mouseup', stopDragging);
+
+    // Touch events for panning
+    imgElement.addEventListener('touchstart', startDragging);
+    document.addEventListener('touchmove', drag);
+    document.addEventListener('touchend', stopDragging);
+
+    function startDragging(e) {
+        if (scale > 1) {
+            e.preventDefault();
+            isDragging = true;
+            lastPanX = e.clientX || e.touches[0].clientX;
+            lastPanY = e.clientY || e.touches[0].clientY;
+        }
+    }
+
+    function drag(e) {
+        if (isDragging && scale > 1) {
+            e.preventDefault();
+            var clientX = e.clientX || e.touches[0].clientX;
+            var clientY = e.clientY || e.touches[0].clientY;
+            
+            var deltaX = clientX - lastPanX;
+            var deltaY = clientY - lastPanY;
+            
+            panX += deltaX / scale;
+            panY += deltaY / scale;
+            
+            lastPanX = clientX;
+            lastPanY = clientY;
+            
+            updateImageTransform();
+        }
+    }
+
+    function stopDragging() {
+        isDragging = false;
+    }
+
+    function updateImageTransform() {
+        // Calculate the maximum allowed panning
+        var imgRect = imgElement.getBoundingClientRect();
+        var containerRect = imgElement.parentElement.getBoundingClientRect();
+        
+        var maxPanX = (imgRect.width * scale - containerRect.width) / (2 * scale);
+        var maxPanY = (imgRect.height * scale - containerRect.height) / (2 * scale);
+        
+        // Limit panning to keep image within view
+        panX = Math.max(-maxPanX, Math.min(maxPanX, panX));
+        panY = Math.max(-maxPanY, Math.min(maxPanY, panY));
+        
+        imgElement.style.transform = `translate(calc(-50% + ${panX}px), calc(-50% + ${panY}px)) scale(${scale})`;
+    }
+
+    function resetZoom() {
+        scale = 1;
+        panX = 0;
+        panY = 0;
+        lastScale = 1;
+        updateImageTransform();
+    }
 
     changeEvent();
 })();
