@@ -1,0 +1,13 @@
+<nav>
+	{% for link in site.data.navigation %}
+		{% if link.link == page.url %}
+			{% assign class = "active" %}
+		{% else %}
+			{% assign class = "" %}
+		{% endif %}
+
+		<a href="{{ link.link | relative_url }}" class="{{ class }}">
+			{{ link.name }}
+		</a>
+	{% endfor %}
+</nav>

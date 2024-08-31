@@ -1,0 +1,50 @@
+### Site metadata
+
+title: Artist's Portfolio
+description: A gallery of images for an artist's portfolio, built with Jekyll
+
+url: "https://artists-portfolio.netlify.app"
+baseurl: ""
+
+github_username: "MichaelCurrin"
+repository: "MichaelCurrin/artists-portfolio"
+
+google_analytics_key: ""
+
+# For SEO tag.
+logo: /siteicon.png
+author:
+  name: Michael Currin
+  twitter:
+social:
+  name: Artist's Portfolio
+  links:
+    - https://github.com/MichaelCurrin/artists-portfolio
+
+### Build settings
+
+timezone: Etc/UTC
+
+permalink: pretty
+
+defaults:
+  - scope:
+      path: ""
+    values:
+      layout: "default"
+      text_width: true
+  - scope:
+      path: "index.html"
+    values:
+      text_width: false
+
+plugins:
+  - jekyll-sitemap
+  - jekyll-seo-tag
+
+exclude:
+  - README.md
+  - LICENSE
+  - LICENCE-source
+  - Makefile
+  - netlify.toml
