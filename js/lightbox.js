@@ -188,7 +188,7 @@
     function resetZoom() {
         scale = 1;
         posX = posY = lastPosX = lastPosY = 0;
-        imgElement.style.transform = 'translate(0, 0) scale(1)';
+        imgElement.style.transform = 'translate(-50%, -50%) scale(1)';
         lastScale = 1;
     }
 
