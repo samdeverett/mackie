@@ -84,12 +84,14 @@
             case 37: // left
                 if ($prev.is(':visible')) {
                     changeHash($prev.attr('href'));
+                    resetZoom();
                 }
                 break;
 
             case 39: // right
                 if ($next.is(':visible')) {
                     changeHash($next.attr('href'));
+                    resetZoom();
                 }
                 break;
 
@@ -127,30 +129,6 @@
             changeHash($prev.attr('href'));
             resetZoom();
         }
-    });
-
-    $(document).keyup(function(e) {
-        switch (e.which) {
-            case 37: // left
-                if ($prev.is(':visible')) {
-                    changeHash($prev.attr('href'));
-                }
-                break;
-
-            case 39: // right
-                if ($next.is(':visible')) {
-                    changeHash($next.attr('href'));
-                }
-                break;
-
-            case 27: // escape
-                changeHash('#');
-                break;
-
-            default:
-                return; // exit this handler for other keys
-        }
-        e.preventDefault();
     });
 
     // Enable pinch-to-zoom and panning for the image
