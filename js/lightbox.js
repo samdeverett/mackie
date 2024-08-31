@@ -153,16 +153,26 @@
     var lastScale = 1; // To store the last scale value after pinch
     var posX = 0, posY = 0; // Variables to store the current position
     var lastPosX = 0, lastPosY = 0; // To store the last pan positions
-    var maxPosX, maxPosY, transform; // Variables for boundary checks
 
     // Handle pinch event for zoom
     pinchZoom.on('pinch', function(ev) {
         scale = Math.max(1, lastScale * ev.scale); // Limit zoom-out to the original image size (1x)
-        transform = 'translate(' + (posX + 0.5 * imgElement.clientWidth * (1 - scale)) + 'px, ' +
-                    (posY + 0.5 * imgElement.clientHeight * (1 - scale)) + 'px) scale(' + scale + ')';
-        imgElement.style.transform = transform;
+
+        // Calculate new transform values
+        var imgWidth = imgElement.clientWidth;
+        var imgHeight = imgElement.clientHeight;
+        var centerX = imgWidth / 2;
+        var centerY = imgHeight / 2;
+
+        // Center the image based on the scale
+        posX = lastPosX + (centerX - centerX / scale) * (ev.center.x - imgElement.offsetLeft) / imgWidth;
+        posY = lastPosY + (centerY - centerY / scale) * (ev.center.y - imgElement.offsetTop) / imgHeight;
+
+        // Apply transformation
+        imgElement.style.transform = `translate(${posX}px, ${posY}px) scale(${scale})`;
     });
 
+    // Handle pinchend event to update the last scale
     pinchZoom.on('pinchend', function() {
         lastScale = scale; // Update the last scale after pinch ends
     });
@@ -174,17 +184,19 @@
             posY = lastPosY + ev.deltaY;
 
             // Boundary checks to prevent panning out of image limits
-            maxPosX = Math.max((scale - 1) * imgElement.clientWidth / 2, 0);
-            maxPosY = Math.max((scale - 1) * imgElement.clientHeight / 2, 0);
+            var imgWidth = imgElement.clientWidth * scale;
+            var imgHeight = imgElement.clientHeight * scale;
+            var maxPosX = Math.max((scale - 1) * imgElement.clientWidth / 2, 0);
+            var maxPosY = Math.max((scale - 1) * imgElement.clientHeight / 2, 0);
 
             posX = Math.min(Math.max(posX, -maxPosX), maxPosX);
             posY = Math.min(Math.max(posY, -maxPosY), maxPosY);
 
-            transform = 'translate(' + posX + 'px, ' + posY + 'px) scale(' + scale + ')';
-            imgElement.style.transform = transform;
+            imgElement.style.transform = `translate(${posX}px, ${posY}px) scale(${scale})`;
         }
     });
 
+    // Update last positions on pan end
     pinchZoom.on('panend', function() {
         lastPosX = posX;
         lastPosY = posY;
