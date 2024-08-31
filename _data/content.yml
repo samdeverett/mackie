@@ -1,13 +1,10 @@
 about:
   text: |
-    _Sample project site. Images and template by CloudCannon._
+    I am Max Jeremy and this is my gallery.
 
-    I am an artist and this is my website.
+    I'm currently available for new projects. Please use the Contact page if you're interested in buying or commissioning work.
 
-    Browse my gallery and contact me for sales or commissioned work.
-
-    Follow me on social media.
+    You can also follow me on social media <a href="https://www.instagram.com/maxjeremy_art/">here</a>.
 
 contact:
-  text: |
-    I'm currently available for new projects. Get in touch, I'd love to work together.
+  text:
