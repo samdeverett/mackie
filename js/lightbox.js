@@ -78,6 +78,22 @@
         return false;
     });
 
+    // Add swipe detection with Hammer.js
+    var overlayElement = document.querySelector('.overlay');
+    var hammer = new Hammer(overlayElement);
+
+    hammer.on('swipeleft', function() {
+        if ($next.is(':visible')) {
+            changeHash($next.attr('href'));
+        }
+    });
+
+    hammer.on('swiperight', function() {
+        if ($prev.is(':visible')) {
+            changeHash($prev.attr('href'));
+        }
+    });
+
     $(document).keyup(function(e) {
         switch (e.which) {
             case 37: // left
