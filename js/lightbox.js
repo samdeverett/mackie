@@ -82,6 +82,13 @@
     var overlayElement = document.querySelector('.overlay');
     var hammer = new Hammer(overlayElement);
 
+    // Configure swipe settings
+    hammer.get('swipe').set({
+        direction: Hammer.DIRECTION_HORIZONTAL,
+        threshold: 40, // Minimum distance (in pixels) required to trigger a swipe
+        velocity: 0.3   // Minimum speed (in pixels/second) to trigger a swipe
+    });
+
     hammer.on('swipeleft', function() {
         if ($next.is(':visible')) {
             changeHash($next.attr('href'));
@@ -124,20 +131,17 @@
 
     // Enable pinch gestures
     pinchZoom.get('pinch').set({ enable: true });
+    pinchZoom.get('pan').set({ enable: true }); // Enable panning
 
     var scale = 1; // Initial scale
     var lastScale = 1; // To store the last scale value after pinch
     var posX = 0, posY = 0; // Variables to store the current position
     var lastPosX = 0, lastPosY = 0; // To store the last pan positions
     var maxPosX, maxPosY, transform; // Variables for boundary checks
-    var isPanning = false; // To track if panning is happening
 
     // Handle pinch event for zoom
     pinchZoom.on('pinch', function(ev) {
-        // Prevent zoom-out beyond the original size (scale = 1)
         scale = Math.max(1, lastScale * ev.scale); // Limit zoom-out to the original image size (1x)
-        
-        // Apply transformation
         transform = 'translate(' + posX + 'px, ' + posY + 'px) scale(' + scale + ')';
         imgElement.style.transform = transform;
     });
@@ -145,7 +149,6 @@
     pinchZoom.on('pinchend', function() {
         lastScale = scale; // Update the last scale after pinch ends
     });
-
 
     // Handle pan event for moving the image
     pinchZoom.on('pan', function(ev) {
