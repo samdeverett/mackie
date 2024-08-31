@@ -9,12 +9,9 @@
     z-index: 1000;
 }
 
-.overlay img {
-    top: 50%;
-}
-
 .overlay-active .overlay {
     display: flex; /* Show the overlay */
+    top: 50%;
 }
 
 .caption {
