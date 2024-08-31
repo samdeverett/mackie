@@ -78,6 +78,31 @@
         return false;
     });
 
+    // Arrow key support
+    $(document).keyup(function(e) {
+        switch (e.which) {
+            case 37: // left
+                if ($prev.is(':visible')) {
+                    changeHash($prev.attr('href'));
+                }
+                break;
+
+            case 39: // right
+                if ($next.is(':visible')) {
+                    changeHash($next.attr('href'));
+                }
+                break;
+
+            case 27: // escape
+                changeHash('#');
+                break;
+
+            default:
+                return; // exit this handler for other keys
+        }
+        e.preventDefault();
+    });
+
     // Add swipe detection with Hammer.js
     var overlayElement = document.querySelector('.overlay');
     var hammer = new Hammer(overlayElement);
@@ -89,15 +114,18 @@
         velocity: 0.3   // Minimum speed (in pixels/second) to trigger a swipe
     });
 
+    // Handle swipe events and reset zoom
     hammer.on('swipeleft', function() {
         if ($next.is(':visible')) {
             changeHash($next.attr('href'));
+            resetZoom();
         }
     });
 
     hammer.on('swiperight', function() {
         if ($prev.is(':visible')) {
             changeHash($prev.attr('href'));
+            resetZoom();
         }
     });
 
@@ -175,11 +203,16 @@
 
     // Reset zoom and position on double tap
     pinchZoom.on('doubletap', function() {
+        resetZoom();
+    });
+
+    // Function to reset zoom and position
+    function resetZoom() {
         scale = 1;
         posX = posY = lastPosX = lastPosY = 0;
         imgElement.style.transform = 'translate(0, 0) scale(1)';
         lastScale = 1;
-    });
+    }
 
     changeEvent();
 })();
