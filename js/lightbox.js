@@ -19,6 +19,11 @@
         }
     };
 
+    var scale = 1; // Initial scale
+    var lastScale = 1; // To store the last scale value after pinch
+    var posX = 0, posY = 0; // Variables to store the current position
+    var lastPosX = 0, lastPosY = 0; // To store the last pan positions
+
     function resetZoom() {
         scale = 1;
         posX = posY = lastPosX = lastPosY = 0;
@@ -147,32 +152,14 @@
 
     // Enable pinch and pan gestures
     pinchZoom.get('pinch').set({ enable: true });
-    pinchZoom.get('pan').set({ enable: true }); 
-
-    var scale = 1; // Initial scale
-    var lastScale = 1; // To store the last scale value after pinch
-    var posX = 0, posY = 0; // Variables to store the current position
-    var lastPosX = 0, lastPosY = 0; // To store the last pan positions
+    pinchZoom.get('pan').set({ enable: true });
 
     // Handle pinch event for zoom
     pinchZoom.on('pinch', function(ev) {
         scale = Math.max(1, lastScale * ev.scale); // Limit zoom-out to the original image size (1x)
-
-        // Calculate new transform values
-        var imgWidth = imgElement.clientWidth;
-        var imgHeight = imgElement.clientHeight;
-        var centerX = imgWidth / 2;
-        var centerY = imgHeight / 2;
-
-        // Center the image based on the scale
-        posX = lastPosX + (centerX - centerX / scale) * (ev.center.x - imgElement.offsetLeft) / imgWidth;
-        posY = lastPosY + (centerY - centerY / scale) * (ev.center.y - imgElement.offsetTop) / imgHeight;
-
-        // Apply transformation
-        imgElement.style.transform = `translate(${posX}px, ${posY}px) scale(${scale})`;
+        imgElement.style.transform = `translate(-50%, -50%) scale(${scale})`;
     });
 
-    // Handle pinchend event to update the last scale
     pinchZoom.on('pinchend', function() {
         lastScale = scale; // Update the last scale after pinch ends
     });
@@ -192,11 +179,10 @@
             posX = Math.min(Math.max(posX, -maxPosX), maxPosX);
             posY = Math.min(Math.max(posY, -maxPosY), maxPosY);
 
-            imgElement.style.transform = `translate(${posX}px, ${posY}px) scale(${scale})`;
+            imgElement.style.transform = `translate(-50%, -50%) scale(${scale})`;
         }
     });
 
-    // Update last positions on pan end
     pinchZoom.on('panend', function() {
         lastPosX = posX;
         lastPosY = posY;
