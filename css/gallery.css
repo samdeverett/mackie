@@ -10,7 +10,7 @@
 }
 
 .overlay img {
-    transform: translateY(-50%);
+    top: 50%;
 }
 
 .overlay-active .overlay {
