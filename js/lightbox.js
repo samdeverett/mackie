@@ -118,5 +118,26 @@
         e.preventDefault();
     });
 
+    // Enable pinch-to-zoom for the image
+    var imgElement = document.querySelector('.overlay img');
+    var pinchZoom = new Hammer(imgElement);
+
+    // Enable pinch gestures
+    pinchZoom.get('pinch').set({ enable: true });
+
+    var scale = 1; // Initial scale
+
+    // Handle pinch event
+    pinchZoom.on('pinch', function(ev) {
+        scale = ev.scale;
+        imgElement.style.transform = 'translate(-50%, -50%) scale(' + scale + ')';
+    });
+
+    // Reset zoom on double tap
+    pinchZoom.on('doubletap', function() {
+        scale = 1;
+        imgElement.style.transform = 'translate(-50%, -50%) scale(1)';
+    });
+
     changeEvent();
 })();
