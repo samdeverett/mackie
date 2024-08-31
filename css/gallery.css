@@ -30,6 +30,7 @@
 .close {
     right: 20px;
     bottom: 10px;
+    top: unset;
 }
 
 .prev {
