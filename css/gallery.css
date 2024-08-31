@@ -1,8 +1,8 @@
 .overlay {
     display: none; /* Initially hidden */
     position: fixed;
-    width: 75vw;
-    height: 75vh;
+    width: 100vw;
+    height: 100vh;
     background-color: rgba(0, 0, 0, 0.9);
     justify-content: center;
     align-items: center;
@@ -11,6 +11,11 @@
 
 .overlay-active .overlay {
     display: flex; /* Show the overlay */
+}
+
+img {
+    top: 50%;
+    transform: translateY(-50%);
 }
 
 .caption {
