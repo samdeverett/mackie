@@ -21,8 +21,7 @@
 
 .close, .prev, .next {
     position: absolute;
-    top: 10px;
-    font-size: 50px;
+    font-size: 100px;
     color: white;
     text-decoration: none;
 }
@@ -30,7 +29,6 @@
 .close {
     right: 20px;
     bottom: 10px;
-    top: unset;
 }
 
 .prev {
