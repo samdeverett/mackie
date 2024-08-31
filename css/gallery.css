@@ -21,14 +21,15 @@
 
 .close, .prev, .next {
     position: absolute;
-    bottom: 10px;
-    font-size: 30px;
+    top: 10px;
+    font-size: 50px;
     color: white;
     text-decoration: none;
 }
 
 .close {
     right: 20px;
+    bottom: 10px;
 }
 
 .prev {
