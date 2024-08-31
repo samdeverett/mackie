@@ -4,7 +4,7 @@ title: Contact
 {{ site.data.content.contact.text | markdownify }}
 
 <form method="post" action="{{ site.baseurl }}/contact-success/">
-	<input type="hidden" name="_to" value="{{ site.data.email }}" />
+	<input type="hidden" name="_to" value="{{ ite.data.content.contact.email }}" />
 	<input type="text" name="_gotcha" style="display: none;">
 
 	<div class="contain">
@@ -13,8 +13,8 @@ title: Contact
 			<input type="text" name="first-name" id="first-name" />
 		</div>
 		<div class="split">
-			<label for="surname">Surname</label>
-			<input type="text" name="surname" id="surname" />
+			<label for="last-name">Last Name</label>
+			<input type="text" name="last-name" id="last-name" />
 		</div>
 	</div>
 
