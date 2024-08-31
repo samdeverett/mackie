@@ -27,7 +27,7 @@
     var lastPanX = 0;
     var lastPanY = 0;
     var isDragging = false;
-    var panVelocity = 1.5; // Adjust this value to increase/decrease panning speed
+    var panVelocity = 3; // Adjust this value to increase/decrease panning speed
 
     // Hammer.js configuration
     var imgElement = document.querySelector('.overlay img');
