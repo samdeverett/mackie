@@ -1,5 +1,7 @@
 - image: /uploads/china.jpg
   caption:
+- image: /uploads/whatmatters.jpg
+  caption:
 - image: /uploads/circlemoon.png
   caption:
 - image: /uploads/deverett.jpg
@@ -21,6 +23,4 @@
 - image: /uploads/space.jpg
   caption:
 - image: /uploads/sprawl.jpg
-  caption:
-- image: /uploads/whatmatters.jpg
   caption:
